@@ -31,20 +31,14 @@
     </nav>
 
     <!-- HERO -->
-    <section id="home" class="hero">
-      <h1 class="fade-in">Hi, I'm Lelin</h1>
-      <p class="fade-in">Frontend Developer | UI Designer</p>
-      <a href="#projects" class="btn fade-in">View Projects</a>
-    </section>
-
-    <!-- ABOUT -->
-    <section id="about" class="about reveal">
-      <h2>About Me</h2>
-      <p>
-        I build responsive, modern websites with clean UI and smooth user
-        experience.
-      </p>
-    </section>
+    <section id="home" class="hero"></section>
+    <script>
+      fetch("/my-portfolio/Components/Hero.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("home").innerHTML = data;
+        });
+    </script>
 
     <!-- SKILLS -->
     <section id="skills" class="skills reveal">

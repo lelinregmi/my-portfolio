@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hero Section</title>
+    <link rel="stylesheet" href="/my-portfolio/css/hero.css" />
+  </head>
+  <body>
+    <section class="hero">
+      <div class="hero-container">
+        <!-- LEFT -->
+        <div class="hero-left">
+          <p class="hello">👋 Hello, I'm</p>
+
+          <h1 class="name">Lelin Kumar <br /><span>Regmi</span></h1>
+
+          <p class="aka">aka <span>Mr. Aadit</span></p>
+
+          <!-- Typing animation -->
+          <p class="typing">I'm a <span id="type"></span></p>
+
+          <p class="desc">
+            A passionate tech enthusiast dedicated to creating innovative
+            solutions through software development, web development, IoT
+            projects, machine learning, Django, and digital content creation.
+          </p>
+
+          <div class="buttons">
+            <a href="#" class="btn primary">View My Work →</a>
+            <a href="#" class="btn outline">Contact Me ✈</a>
+          </div>
+
+          <div class="badges">
+            <span>🎓 Computer Engineer</span>
+            <span>💻 Web Developer</span>
+            <span>🤖 AI/ML Learner</span>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="hero-right">
+          <div class="myphoto">
+            <img src="/my-portfolio/images/myphoto.png" alt="profile" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typing Script -->
+    <script>
+      const roles = [
+        "Computer Engineer",
+        "Software Developer",
+        "Webpage Developer",
+        "Machine Learning Enthusiast",
+        "Data Engineer",
+      ];
+
+      const typingElement = document.getElementById("type");
+      let roleIndex = 0;
+      let charIndex = 0;
+      let isDeleting = false;
+
+      function typeEffect() {
+        const currentRole = roles[roleIndex];
+        if (!isDeleting) {
+          typingElement.textContent = currentRole.substring(0, charIndex + 1);
+          charIndex++;
+          if (charIndex === currentRole.length) {
+            isDeleting = true;
+            setTimeout(typeEffect, 1500); // pause before deleting
+            return;
+          }
+        } else {
+          typingElement.textContent = currentRole.substring(0, charIndex - 1);
+          charIndex--;
+          if (charIndex === 0) {
+            isDeleting = false;
+            roleIndex = (roleIndex + 1) % roles.length;
+          }
+        }
+        const speed = isDeleting ? 50 : 100;
+        setTimeout(typeEffect, speed);
+      }
+
+      typeEffect();
+    </script>
+  </body>
+</html>
