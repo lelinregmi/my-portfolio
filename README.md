@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+This is my portfolio website, where you can explore me
 
 TODO: Document your project here
