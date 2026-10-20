@@ -25,18 +25,26 @@ const NotesDetail = () => {
 
   useEffect(() => {
     if (!supabase) {
+      setSubject(subjectsByGrade[gradeNumber]?.find((item) => item.id === subjectId) ?? null);
+      setNotes([]);
       setLoading(false);
       return;
     }
 
+    let active = true;
+    setSubject(null);
+    setNotes([]);
+    setLoadError("");
+    setLoading(true);
+
     const loadNotes = async () => {
-      setLoading(true);
       const { data: subjectData, error: subjectError } = await supabase
         .from("subjects")
         .select("id, name")
         .eq("grade", gradeNumber)
         .eq("id", subjectId ?? "")
         .maybeSingle();
+      if (!active) return;
       if (subjectError) {
         setLoadError(`Could not load subject: ${subjectError.message}`);
         setLoading(false);
@@ -60,6 +68,7 @@ const NotesDetail = () => {
         .eq("published", true)
         .order("created_at", { ascending: false });
 
+      if (!active) return;
       if (error) {
         setLoadError(`Could not load notes: ${error.message}`);
       } else {
@@ -70,6 +79,7 @@ const NotesDetail = () => {
           const { data: pdfData, error: pdfError } = await supabase.storage
             .from("portfolio-note-pdfs")
             .createSignedUrl(note.pdf_path, 3600);
+          if (!active) return { ...note, pdf_url: null };
           if (pdfError) {
             pdfErrors.push(`Could not open the PDF for "${note.title}": ${pdfError.message}`);
             return { ...note, pdf_url: null };
@@ -77,6 +87,7 @@ const NotesDetail = () => {
           return { ...note, pdf_url: pdfData.signedUrl };
         }));
 
+        if (!active) return;
         setLoadError(pdfErrors.join(" "));
         setNotes(notesWithPdfUrls);
       }
@@ -84,6 +95,9 @@ const NotesDetail = () => {
     };
 
     void loadNotes();
+    return () => {
+      active = false;
+    };
   }, [gradeNumber, subjectId]);
 
   return (

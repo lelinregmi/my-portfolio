@@ -464,7 +464,7 @@ const AdminPage = () => {
         const { error: mediaCleanupError } = await supabase.storage.from("portfolio-media").remove(mediaPathsToRemove);
         if (mediaCleanupError) cleanupErrorMessage += ` Content was saved, but old media could not be removed: ${mediaCleanupError.message}`;
       }
-      resetForm(section === "subjects");
+      resetForm(section === "notes" || section === "subjects");
       setNotice(`${section === "notes" ? "Note" : section === "subjects" ? "Subject" : section.slice(0, -1)} ${form.id ? "updated" : "added"}.${cleanupErrorMessage ? ` ${cleanupErrorMessage}` : ""}`);
       if (section === "subjects") {
         await loadSubjects();
@@ -503,7 +503,7 @@ const AdminPage = () => {
       const { error: mediaError } = await supabase.storage.from("portfolio-media").remove(pathsToRemove);
       if (mediaError) pdfCleanupError += ` Content was deleted, but attached media could not be removed: ${mediaError.message}`;
     }
-    if (form.id === item.id) resetForm(section === "subjects");
+    if (form.id === item.id) resetForm(section === "notes" || section === "subjects");
     setNotice(`Content deleted.${pdfCleanupError}`);
     if (section === "subjects") {
       await loadSubjects();
@@ -514,16 +514,24 @@ const AdminPage = () => {
   const updateForm = (changes: Partial<ContentForm>) =>
     setForm((current) => ({ ...current, ...changes }));
 
-  const resetForm = (preserveSubjectGrade = false) =>
+  const resetForm = (preserveSelection = false) =>
     setForm({
       ...emptyForm,
-      ...(preserveSubjectGrade && section === "subjects" ? { grade: form.grade } : {}),
+      ...(preserveSelection && (section === "notes" || section === "subjects")
+        ? {
+            grade: form.grade,
+            ...(section === "notes" ? { subject: form.subject } : {}),
+          }
+        : {}),
     });
 
   const subjectsForGrade = subjects.filter((subject) => subject.grade === Number(form.grade));
+  const selectedSubject = subjectsForGrade.find((subject) => subject.id === form.subject);
   const visibleItems = section === "subjects"
     ? items.filter((item) => item.grade === Number(form.grade))
-    : items;
+    : section === "notes"
+      ? items.filter((item) => item.grade === Number(form.grade) && item.subject === form.subject)
+      : items;
 
   return (
     <main className="min-h-screen bg-background px-4 py-10 sm:px-6">
@@ -612,7 +620,14 @@ const AdminPage = () => {
                     {form.id ? "Edit" : "Add"} {section === "subjects" ? "subject" : sectionOptions.find((item) => item.id === section)?.label.slice(0, -1)}
                   </h2>
                   {form.id && (
-                    <Button type="button" variant="ghost" size="sm" onClick={() => resetForm(section === "subjects")}>Cancel edit</Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => resetForm(section === "notes" || section === "subjects")}
+                    >
+                      Cancel edit
+                    </Button>
                   )}
                 </div>
 
@@ -798,7 +813,12 @@ const AdminPage = () => {
 
               <section aria-label={`Existing ${section}`} className="rounded-xl border border-border bg-card p-5">
                 <h2 className="mb-4 text-lg font-semibold text-foreground">
-                  Existing {section}{section === "subjects" ? ` — Class ${form.grade}` : ""}
+                  Existing {section}
+                  {section === "subjects"
+                    ? ` — Class ${form.grade}`
+                    : section === "notes"
+                      ? ` — Class ${form.grade}${selectedSubject ? ` · ${selectedSubject.name}` : ""}`
+                      : ""}
                 </h2>
                 {loadingItems ? (
                   <p className="text-sm text-muted-foreground">Loading…</p>
@@ -830,7 +850,11 @@ const AdminPage = () => {
                   </ul>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    No {section === "subjects" ? `subjects for Class ${form.grade}` : section} yet. Add one using the form.
+                    {section === "subjects"
+                      ? `No subjects for Class ${form.grade} yet. Add one using the form.`
+                      : section === "notes"
+                        ? `No notes for Class ${form.grade}${selectedSubject ? ` · ${selectedSubject.name}` : ""} yet. Add one using the form.`
+                        : `No ${section} yet. Add one using the form.`}
                   </p>
                 )}
               </section>
