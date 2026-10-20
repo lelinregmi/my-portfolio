@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Notes from "./pages/Notes.tsx";
 import NotesDetail from "./pages/NotesDetail.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
+import ContentDetail from "./pages/ContentDetail.tsx";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/notes" element={<Notes />} />
           <Route path="/notes/:grade/:subjectId" element={<NotesDetail />} />
+          <Route path="/blog/:contentId" element={<ContentDetail kind="blog" />} />
+          <Route path="/projects/:contentId" element={<ContentDetail kind="project" />} />
           <Route path="/admin" element={<AdminPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

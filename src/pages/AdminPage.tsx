@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase, supabaseConfigError } from "@/lib/supabase";
-import { subjectIdFromName, subjectsByGrade } from "@/lib/subjects";
+import { subjectIdFromName } from "@/lib/subjects";
 
 type ContentSection = "notes" | "blogs" | "projects" | "subjects";
 
@@ -66,7 +66,7 @@ const emptyForm: ContentForm = {
   id: "",
   title: "",
   grade: "9",
-  subject: subjectsByGrade[9][0].id,
+  subject: "",
   content: "",
   pdfPath: null,
   pdfFile: null,
@@ -94,6 +94,14 @@ const sectionOptions: { id: ContentSection; label: string; icon: typeof BookOpen
   { id: "projects", label: "Projects", icon: FolderKanban },
   { id: "subjects", label: "Subjects", icon: Settings2 },
 ];
+
+const createUploadId = () => {
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+};
 
 const AdminPage = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -269,6 +277,10 @@ const AdminPage = () => {
   const handleSave = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!supabase) return;
+    if (section === "notes" && !form.subject) {
+      setError("Select a book before saving the note.");
+      return;
+    }
     if (section === "subjects" && !form.subjectName.trim()) {
       setError("Enter a subject name.");
       return;
@@ -312,7 +324,7 @@ const AdminPage = () => {
     const uploadMedia = async (file: File | null, kind: "blog-image" | "project-image" | "project-video") => {
       if (!file) return null;
       const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const path = `${kind}/${crypto.randomUUID()}-${safeFileName}`;
+      const path = `${kind}/${createUploadId()}-${safeFileName}`;
       const { error: uploadError } = await supabase.storage
         .from("portfolio-media")
         .upload(path, file, {
@@ -331,7 +343,7 @@ const AdminPage = () => {
     try {
       if (section === "notes" && form.pdfFile) {
         const safeFileName = form.pdfFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        uploadedPdfPath = `${form.grade}/${form.subject}/${crypto.randomUUID()}-${safeFileName}`;
+        uploadedPdfPath = `${form.grade}/${form.subject}/${createUploadId()}-${safeFileName}`;
         const { error: uploadError } = await supabase.storage
           .from("portfolio-note-pdfs")
           .upload(uploadedPdfPath, form.pdfFile, {
@@ -641,7 +653,7 @@ const AdminPage = () => {
                           const nextGrade = event.target.value;
                           updateForm({
                             grade: nextGrade,
-                            subject: subjects.find((subject) => subject.grade === Number(nextGrade))?.id ?? "",
+                            subject: "",
                           });
                         }}
                         className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
@@ -652,14 +664,16 @@ const AdminPage = () => {
                     {section === "notes" ? <label className="text-sm font-medium text-foreground">
                       Subject
                       <select
+                        required
                         value={form.subject}
                         onChange={(event) => updateForm({ subject: event.target.value })}
                         className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                       >
+                        <option value="">Select a book</option>
                         {subjectsForGrade.map((subject) => <option key={subject.id} value={subject.id}>{subject.name}</option>)}
                       </select>
                     </label> : <div className="self-end text-sm text-muted-foreground">
-                      Subject ID: {subjectIdFromName(form.subjectName) || "—"}
+                      {form.id && <>Subject ID: {form.id}</>}
                     </div>}
                   </div>
                 )}
@@ -853,7 +867,9 @@ const AdminPage = () => {
                     {section === "subjects"
                       ? `No subjects for Class ${form.grade} yet. Add one using the form.`
                       : section === "notes"
-                        ? `No notes for Class ${form.grade}${selectedSubject ? ` · ${selectedSubject.name}` : ""} yet. Add one using the form.`
+                        ? form.subject
+                          ? `No notes for Class ${form.grade}${selectedSubject ? ` · ${selectedSubject.name}` : ""} yet. Add one using the form.`
+                          : "Select a book to view its notes."
                         : `No ${section} yet. Add one using the form.`}
                   </p>
                 )}

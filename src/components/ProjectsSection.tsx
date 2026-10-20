@@ -1,46 +1,9 @@
 import { motion } from "framer-motion";
 import { ExternalLink, Github } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-
-interface Project {
-  id: string;
-  title: string;
-  tech: string;
-  desc: string;
-  github_url?: string | null;
-  live_url?: string | null;
-  image_url?: string | null;
-  video_url?: string | null;
-}
-
-const defaultProjects: Project[] = [
-  {
-    id: "attendance-prediction",
-    title: "MACHINE LEARNING BASED EVENTS PARTICIPANTS PRESENCE PREDICTION SYSTEM WITH FACIAL ATTENDANCE",
-    tech: "Python,Fullstack",
-    desc: "ML based events participants presence prediction system with facial attendence where admin can view attendance of participants and also predict the participants if he/she comes or not on events.",
-  },
-  {
-    id: "e-commerce-platform",
-    title: "E-Commerce Platform",
-    tech: "Full-stack (MERN)",
-    desc: "Full-stack web application with payment integration, inventory management, and analytics dashboard. such as e-learning,ecommerce",
-  },
-  {
-    id: "portfolio-blog-cms",
-    title: "Portfolio & Blog CMS",
-    tech: "Next.js · Tailwind · Supabase",
-    desc: "Custom content management system with markdown support, SEO optimization, and dynamic theming.",
-  },
-  {
-    id: "iot-smart-dashboard",
-    title: "IoT Smart Dashboard",
-    tech: "React · MQTT · Arduino",
-    desc: "Web dashboard for monitoring IoT sensor data in real-time with alerts and data visualization.",
-  },
-
-];
+import { defaultProjects, type Project } from "@/lib/publicContent";
 
 const ProjectsSection = () => {
   const [projects, setProjects] = useState<Project[]>(supabase ? [] : defaultProjects);
@@ -135,18 +98,15 @@ const ProjectsSection = () => {
               )}
               <p className="font-mono text-xs text-primary mb-4">{project.tech}</p>
               <h3 className="text-xl font-bold text-foreground mb-3 group-hover:gradient-text transition-all">
-                {project.title}
+                <Link to={`/projects/${project.id}`} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                  {project.title}
+                </Link>
               </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-6">{project.desc}</p>
-              {project.video_url && (
-                <video
-                  src={project.video_url}
-                  controls
-                  preload="metadata"
-                  className="mb-6 aspect-video w-full rounded-lg bg-black"
-                >
-                  Your browser does not support embedded video.
-                </video>
+              <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">{project.desc}</p>
+              {project.desc.length > 180 && (
+                <Link to={`/projects/${project.id}`} className="mt-2 mb-6 inline-block text-sm font-medium text-primary hover:underline">
+                  See more
+                </Link>
               )}
               <div className="flex gap-3 text-muted-foreground">
                 {project.github_url ? (

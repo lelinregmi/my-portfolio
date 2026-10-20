@@ -1,42 +1,9 @@
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  date: string;
-  excerpt: string;
-  tag: string;
-  image_url?: string | null;
-}
-
-const defaultPosts: BlogPost[] = [
-  {
-    id: "pagal-basti",
-    title: "Pagal Basti: Exploring Love, Ego, and Existential Madness",
-    date: "July 21, 2026",
-    excerpt: "Set against the scenic backdrops of Pokhara and the remote Himalayan village of Ghandruk," +
-      " the narrative begins through the eyes of a curious journalist drawn to tales of an isolated, unconventional community. Sarubhakta uses an experimental storytelling structure: starting as a " +
-      "first-person journalistic account of a mysterious haven, the story gradually shifts into a deep, third-person psychological character study that breaks standard literary conventions.",
-    tag: "Review of novel pagal-Basti",
-  },
-  {
-    id: "building-rest-apis",
-    title: "Building REST APIs with Node.js",
-    date: "Feb 28, 2026",
-    excerpt: "Step-by-step walkthrough of creating scalable RESTful APIs using Express.js and PostgreSQL.",
-    tag: "Backend",
-  },
-  {
-    id: "iot-journey",
-    title: "My Journey into IoT with Arduino",
-    date: "Jan 10, 2026",
-    excerpt: "How I built my first IoT project — a smart sensor dashboard connected to the cloud.",
-    tag: "IoT",
-  },
-];
+import { defaultPosts, type BlogPost } from "@/lib/publicContent";
 
 const BlogSection = () => {
   const [posts, setPosts] = useState<BlogPost[]>(supabase ? [] : defaultPosts);
@@ -130,9 +97,16 @@ const BlogSection = () => {
                 {post.tag}
               </span>
               <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                {post.title}
+                <Link to={`/blog/${post.id}`} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                  {post.title}
+                </Link>
               </h3>
-              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{post.excerpt}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{post.excerpt}</p>
+              {post.excerpt.length > 180 && (
+                <Link to={`/blog/${post.id}`} className="mt-2 mb-4 inline-block text-sm font-medium text-primary hover:underline">
+                  See more
+                </Link>
+              )}
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
