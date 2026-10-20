@@ -4,6 +4,7 @@ import AboutSection from "@/components/AboutSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import BlogSection from "@/components/BlogSection";
 import ContactSection from "@/components/ContactSection";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -18,6 +19,9 @@ const Index = () => {
         <p className="text-sm text-muted-foreground font-mono">
           © 2026 Lelin Kumar Regmi. All rights reserved.
         </p>
+        <Link to="/admin" className="mt-3 inline-block text-xs text-muted-foreground hover:text-primary font-mono">
+          Admin login
+        </Link>
       </footer>
     </div>
   );

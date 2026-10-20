@@ -4,7 +4,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 import profileImg from "@/assets/lelin-profile.jpg";
 import { ArrowDown } from "lucide-react";
 
-const roles = ["Computer Engineer", "Web Developer", "AI/ML Learner"];
+const roles = ["Computer Engineer", "Web Developer", "AI/ML Learner", "Software Devloper"];
 
 const useTypingAnimation = (texts: string[], typingSpeed = 80, deletingSpeed = 50, pauseTime = 1500) => {
   const [displayText, setDisplayText] = useState("");

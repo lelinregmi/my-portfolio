@@ -4,7 +4,7 @@ import { Cpu, Code, Database, Globe } from "lucide-react";
 const skills = [
   { icon: Code, label: "Web Development", desc: "Modern, responsive websites & web applications" },
   { icon: Globe, label: "Full-Stack Solutions", desc: "End-to-end software from frontend to backend" },
-  { icon: Database, label: "Data & Databases", desc: "SQL, NoSQL, and data-driven architectures" },
+  { icon: Database, label: "Data & Databases", desc: "SQL, MongoDB, PostgreSQL and data-driven architectures" },
   { icon: Cpu, label: "IoT & Embedded", desc: "Smart connected devices & sensor integrations" },
 ];
 
@@ -24,9 +24,9 @@ const AboutSection = () => {
             Turning complex problems into <span className="gradient-text">simple designs</span>
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            I'm a Computer Engineering graduate who loves building software that solves real problems. 
-            My focus is on crafting clean, performant websites and full-stack applications — from 
-            intuitive user interfaces to scalable backend systems. I also enjoy working on IoT projects, 
+            I'm a Computer Engineering graduate who loves building software that solves real problems.
+            My focus is on crafting clean, performant websites and full-stack applications — from
+            intuitive user interfaces to scalable backend systems. I also enjoy working on IoT projects,
             bringing software and connected devices together.
           </p>
         </motion.div>
