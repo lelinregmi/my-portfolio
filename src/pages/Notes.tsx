@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { supabase, supabaseConfigError } from "@/lib/supabase";
-import { subjectsByGrade, type Subject } from "@/lib/subjects";
+import { subjectRouteId, subjectsByGrade, type Subject } from "@/lib/subjects";
 
 const Notes = () => {
   const [subjects, setSubjects] = useState<Record<number, Subject[]>>(
@@ -77,7 +77,7 @@ const Notes = () => {
                   return (
                     <Link
                       key={subject.id}
-                      to={`/notes/${grade}/${subject.id}`}
+                      to={`/notes/${grade}/${subjectRouteId(subject)}`}
                       className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50"
                     >
                       <h3 className="font-semibold text-foreground">{subject.name}</h3>

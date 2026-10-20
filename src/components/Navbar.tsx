@@ -11,6 +11,11 @@ const links = [
   { href: "#contact", label: "Contact" },
 ];
 
+const desktopLinkClass =
+  "rounded-md border border-transparent px-3 py-2 text-lg text-black transition-all duration-200 hover:border-primary/60 hover:bg-primary/10 hover:text-primary hover:shadow-[0_0_18px_hsl(var(--primary)/0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-[#39bcc8] font-mono";
+const mobileLinkClass =
+  "rounded-md border border-transparent px-3 py-2 text-sm text-black transition-all duration-200 hover:border-primary/60 hover:bg-primary/10 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-muted-foreground font-mono";
+
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(true);
@@ -57,14 +62,14 @@ useEffect(() => {
         </Link>
 
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {links.map((l) =>
             l.href === "/notes" ? (
-              <Link key={l.href} to={l.href} className="text-lg text-[#39bcc8] hover:text-primary transition-colors font-mono">
+              <Link key={l.href} to={l.href} className={desktopLinkClass}>
                 {l.label}
               </Link>
             ) : (
-              <a key={l.href} href={sectionHref(l.href)} className="text-lg text-[#39bcc8] hover:text-primary transition-colors font-mono">
+              <a key={l.href} href={sectionHref(l.href)} className={desktopLinkClass}>
                 {l.label}
               </a>
             ),
@@ -90,11 +95,11 @@ useEffect(() => {
         <div className="md:hidden bg-background border-b border-border px-6 py-4 flex flex-col gap-4">
           {links.map((l) =>
             l.href === "/notes" ? (
-              <Link key={l.href} to={l.href} onClick={() => setOpen(false)} className="text-sm text-muted-foreground hover:text-primary font-mono">
+              <Link key={l.href} to={l.href} onClick={() => setOpen(false)} className={mobileLinkClass}>
                 {l.label}
               </Link>
             ) : (
-              <a key={l.href} href={sectionHref(l.href)} onClick={() => setOpen(false)} className="text-sm text-muted-foreground hover:text-primary font-mono">
+              <a key={l.href} href={sectionHref(l.href)} onClick={() => setOpen(false)} className={mobileLinkClass}>
                 {l.label}
               </a>
             ),

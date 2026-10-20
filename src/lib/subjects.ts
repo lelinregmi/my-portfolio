@@ -3,35 +3,51 @@ export interface Subject {
   name: string;
 }
 
+export const subjectIdFromName = (name: string) =>
+  name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+export const subjectRouteId = (subject: Subject) =>
+  subjectIdFromName(subject.name) || subject.id;
+
+export const findSubjectByRouteId = (subjects: Subject[], routeId: string) =>
+  subjects.find((subject) => subject.id === routeId)
+  ?? subjects.find((subject) => subjectRouteId(subject) === routeId)
+  ?? null;
+
+const subject = (name: string): Subject => ({
+  id: subjectIdFromName(name),
+  name,
+});
+
 export const subjectsByGrade: Record<number, Subject[]> = {
   9: [
-    { id: "computer-fundamentals", name: "Computer Fundamentals" },
-    { id: "operating-system", name: "Operating System" },
-    { id: "office-applications", name: "Office Applications" },
-    { id: "internet-and-email", name: "Internet and Email" },
-    { id: "computer-security", name: "Computer Security" },
+    subject("Computer Fundamentals"),
+    subject("Operating System"),
+    subject("Office Applications"),
+    subject("Internet and Email"),
+    subject("Computer Security"),
   ],
   10: [
-    { id: "computer-system", name: "Computer System" },
-    { id: "number-system-and-logic", name: "Number System and Boolean Logic" },
-    { id: "programming", name: "Programming" },
-    { id: "web-technology", name: "Web Technology" },
-    { id: "database", name: "Database" },
-    { id: "cybersecurity", name: "Cybersecurity and Digital Citizenship" },
+    subject("Computer System"),
+    subject("Number System and Boolean Logic"),
+    subject("Programming"),
+    subject("Web Technology"),
+    subject("Database"),
+    subject("Cybersecurity and Digital Citizenship"),
   ],
   11: [
-    { id: "computer-system-and-architecture", name: "Computer System and Architecture" },
-    { id: "software-and-programming", name: "Software and Programming" },
-    { id: "web-technology", name: "Web Technology" },
-    { id: "multimedia", name: "Multimedia" },
-    { id: "information-security", name: "Information Security" },
+    subject("Computer System and Architecture"),
+    subject("Software and Programming"),
+    subject("Web Technology"),
+    subject("Multimedia"),
+    subject("Information Security"),
   ],
   12: [
-    { id: "database-management", name: "Database Management System" },
-    { id: "data-structures-and-algorithms", name: "Data Structures and Algorithms" },
-    { id: "computer-network", name: "Computer Network" },
-    { id: "software-engineering", name: "Software Engineering" },
-    { id: "programming-in-c", name: "Programming in C" },
-    { id: "object-oriented-programming", name: "Object-Oriented Programming" },
+    subject("Database Management System"),
+    subject("Data Structures and Algorithms"),
+    subject("Computer Network"),
+    subject("Software Engineering"),
+    subject("Programming in C"),
+    subject("Object-Oriented Programming"),
   ],
 };

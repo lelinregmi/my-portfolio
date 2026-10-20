@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase, supabaseConfigError } from "@/lib/supabase";
-import { subjectsByGrade } from "@/lib/subjects";
+import { subjectIdFromName, subjectsByGrade } from "@/lib/subjects";
 
 type ContentSection = "notes" | "blogs" | "projects" | "subjects";
 
@@ -273,7 +273,7 @@ const AdminPage = () => {
       setError("Enter a subject name.");
       return;
     }
-    if (section === "subjects" && !form.id && !form.subjectName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")) {
+    if (section === "subjects" && !subjectIdFromName(form.subjectName)) {
       setError("Use a subject name with at least one letter or number.");
       return;
     }
@@ -373,7 +373,7 @@ const AdminPage = () => {
     if (section === "subjects") {
       const payload = {
         grade: Number(form.grade),
-        id: form.id || form.subjectName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+        id: subjectIdFromName(form.subjectName),
         name: form.subjectName.trim(),
       };
       const result = form.id
@@ -659,7 +659,7 @@ const AdminPage = () => {
                         {subjectsForGrade.map((subject) => <option key={subject.id} value={subject.id}>{subject.name}</option>)}
                       </select>
                     </label> : <div className="self-end text-sm text-muted-foreground">
-                      {form.id ? `Subject ID: ${form.id}` : "A URL-friendly ID is generated from the subject name."}
+                      Subject ID: {subjectIdFromName(form.subjectName) || "—"}
                     </div>}
                   </div>
                 )}

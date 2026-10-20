@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
-import { subjectsByGrade, type Subject } from "@/lib/subjects";
+import { findSubjectByRouteId, subjectsByGrade, type Subject } from "@/lib/subjects";
 
 interface NoteRecord {
   id: string;
@@ -17,7 +17,7 @@ const NotesDetail = () => {
   const { grade, subjectId } = useParams();
   const gradeNumber = Number(grade);
   const [subject, setSubject] = useState<Subject | null>(
-    supabase ? null : subjectsByGrade[gradeNumber]?.find((item) => item.id === subjectId) ?? null,
+    supabase ? null : findSubjectByRouteId(subjectsByGrade[gradeNumber] ?? [], subjectId ?? ""),
   );
   const [notes, setNotes] = useState<NoteRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ const NotesDetail = () => {
 
   useEffect(() => {
     if (!supabase) {
-      setSubject(subjectsByGrade[gradeNumber]?.find((item) => item.id === subjectId) ?? null);
+      setSubject(findSubjectByRouteId(subjectsByGrade[gradeNumber] ?? [], subjectId ?? ""));
       setNotes([]);
       setLoading(false);
       return;
@@ -41,16 +41,15 @@ const NotesDetail = () => {
       const { data: subjectData, error: subjectError } = await supabase
         .from("subjects")
         .select("id, name")
-        .eq("grade", gradeNumber)
-        .eq("id", subjectId ?? "")
-        .maybeSingle();
+        .eq("grade", gradeNumber);
       if (!active) return;
       if (subjectError) {
         setLoadError(`Could not load subject: ${subjectError.message}`);
         setLoading(false);
         return;
       }
-      if (!subjectData) {
+      const matchedSubject = findSubjectByRouteId(subjectData ?? [], subjectId ?? "");
+      if (!matchedSubject) {
         setSubject(null);
         setNotes([]);
         setLoadError("");
@@ -58,7 +57,7 @@ const NotesDetail = () => {
         return;
       }
 
-      const currentSubject = { id: subjectData.id, name: subjectData.name };
+      const currentSubject = matchedSubject;
       setSubject(currentSubject);
       const { data, error } = await supabase
         .from("notes")
