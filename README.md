@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Lelin Kumar Regmi Portfolio
+=======
+
+>>>>>>> 0d00245d93ffc625cabb7df9701fecf7b4144248
 
 A React, TypeScript, and Vite portfolio with public class 9–12 computer studies notes and a Supabase-backed admin panel for notes, blog posts, and projects.
 
